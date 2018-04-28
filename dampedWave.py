@@ -257,7 +257,6 @@ for N in NList:
     error.append(np.sqrt(np.dot((UFine[-1] - VFine[-1] - WFine[-1]), (UFine[-1] - VFine[-1] - WFine[-1]))))
     errorFEM.append(np.sqrt(np.dot((UFine[-1] - UFEMFine[-1]), (UFine[-1] - UFEMFine[-1]))))
 
-
 # plot errors
 plt.figure('Error comparison')
 plt.loglog(NList, error, '--s', basex=2, basey=2, label='LOD $k=\Omega')
