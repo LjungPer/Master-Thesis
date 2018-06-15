@@ -23,7 +23,7 @@ xp = util.pCoordinates(NFine).flatten()
 
 # time step parameters
 tau = 0.01
-numTimeSteps = 200
+numTimeSteps = 100
 
 
 # ms coefficients
@@ -45,7 +45,9 @@ fem_solutions = []
 lod_solutions = []
 
 for N in NList:
-    print N
+
+    x = []
+    y = []
 
     # coarse mesh parameters
     NWorldCoarse = np.array([N])
@@ -84,7 +86,6 @@ for N in NList:
     prev_fs_sol = ms_basis
     fs_solutions = []
     for i in xrange(numTimeSteps):
-        print i
 
         # solve non-localized system
         lod = lod_wave.LodWave(b_coef, world, np.inf, IPatchGenerator, a_coef, prev_fs_sol, ms_basis)
@@ -230,7 +231,6 @@ for N in NList:
     KFree = KFull[free][:, free]
 
     for i in xrange(numTimeSteps):
-
         n = i + 1
 
         # standard FEM system
@@ -279,40 +279,44 @@ for N in NList:
         # append solution
         UFine.append(UFineFull)
 
-    error.append(np.sqrt(np.dot((UFine[-1] - VFine[-1] - WFine[-1]), (UFine[-1] - VFine[-1] - WFine[-1]))))
-    errorFEM.append(np.sqrt(np.dot((UFine[-1] - UFEMFine[-1]), (UFine[-1] - UFEMFine[-1]))))
-    errorLod.append(np.sqrt(np.dot((UFine[-1] - UlodFine[-1]), (UFine[-1] - UlodFine[-1]))))
+    error.append(np.sqrt(np.dot(np.gradient(UFine[-1] - VFine[-1] - WFine[-1]), np.gradient(UFine[-1] - VFine[-1] - WFine[-1]))))
+    errorFEM.append(np.sqrt(np.dot(np.gradient(UFine[-1] - UFEMFine[-1]), np.gradient(UFine[-1] - UFEMFine[-1]))))
+    errorLod.append(np.sqrt(np.dot(np.gradient(UFine[-1] - UlodFine[-1]), np.gradient(UFine[-1] - UlodFine[-1]))))
 
     solutions.append(VFine[-1] + WFine[-1])
     lod_solutions.append(UlodFine[-1])
     fem_solutions.append(UFEMFine[-1])
 
+    x.append(N)
+    y.append(1./ N ** 2)
+
 #Plot solutions
 plt.figure('FEM-Solutions')
 plt.subplots_adjust(left=0.01, bottom=0.04, right=0.99, top=0.95, wspace=0.1, hspace=0.2)
-plt.plot(xp, UFine[-1], 'k', label='ref')
-plt.plot(xp, solutions[-2], '--', label='New LOD')
-plt.plot(xp, lod_solutions[-2], '--', label='PG-LOD')
-plt.plot(xp, fem_solutions[-2], '--', label='FEM')
-plt.title('Solutions at $1/H=$ ' + str(NList[-2]), fontsize=18  )
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+plt.plot(xp, UFine[-1], 'k', label=r'ref')
+plt.plot(xp, solutions[-2], '--', label=r'New LOD')
+plt.plot(xp, lod_solutions[-2], '--', label=r'LOD')
+plt.plot(xp, fem_solutions[-2], '--', label=r'FEM')
+plt.title(r'Solutions at $1/H=$ ' + str(NList[-2]), fontsize=24)
 plt.tick_params(axis='both', which='both', bottom='off', top='off', labelbottom='off', right='off', left='off',
                 labelleft='off')
-plt.grid(True, which="both", ls="--")
-
-plt.legend(frameon=False, fontsize=15)
+plt.grid(True, which="both")
+plt.legend(fontsize=18)
 plt.show()
 
 # plot errors
-plt.figure('Error comparison')
-plt.subplots_adjust(left=0.09, bottom=0.07, right=0.99, top=0.92, wspace=0.1, hspace=0.2)
-plt.tick_params(labelsize=14)
-plt.loglog(NList, error, '--s', basex=2, basey=2, label='New LOD')
-plt.loglog(NList, errorLod, '--s', basex=2, basey=2, label='PG-LOD $k=\Omega$')
-plt.loglog(NList, errorFEM, '--s', basex=2, basey=2, label='FEM')
-plt.grid(True, which="both", ls="--")
-plt.ylabel('$L^2$-error', fontsize=14)
-plt.xlabel('$1/H$', fontsize=14)
-plt.title('$L^2$-error at $t=%.2f$' % (numTimeSteps * tau), fontsize=16)
-plt.legend(fontsize=12)
-
+plt.figure('Error comparison', figsize=(12,6))
+plt.subplots_adjust(left=0.05, bottom=0.11, right=0.99, top=0.92, wspace=0.1, hspace=0.2)
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+plt.tick_params(labelsize=18)
+plt.loglog(NList, error, '--s', basex=2, basey=2, label=r'New LOD')
+plt.loglog(NList, errorLod, '--o', basex=2, basey=2, label=r'LOD $k=\Omega$')
+plt.loglog(NList, errorFEM, '--D', basex=2, basey=2, label=r'FEM')
+plt.grid(True, which="both")
+plt.xlabel(r'$1/H$', fontsize=20)
+plt.title('$H^1$-error at $t=%.1f$' % (numTimeSteps * tau), fontsize=24)
+plt.legend(fontsize=18)
 plt.show()

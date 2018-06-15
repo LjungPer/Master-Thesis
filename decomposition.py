@@ -31,15 +31,30 @@ epsB = 2 ** (-6)
 aFine = (2 - np.sin(2 * np.pi * xt / epsA)) ** (-1)
 bFine = (2 - np.cos(2 * np.pi * xt / epsB)) ** (-1)
 
-# plot the coefficient
+# plot A(x)
 plt.figure('Coefficient')
-plt.subplots_adjust(left=0.11, bottom=0.13, right=0.99, top=0.92, wspace=0.1, hspace=0.2)
-plt.tick_params(labelsize=14)
-plt.plot(xt,aFine, linewidth=2, label='$A_{\epsilon}(x)$')
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+plt.subplots_adjust(left=0.09, bottom=0.08, right=0.99, top=0.91, wspace=0.1, hspace=0.2)
+plt.tick_params(labelsize=16)
+plt.plot(xt,aFine, linewidth=2, label=r'$A_{\epsilon}(x)$')
 plt.yticks((0,np.max(aFine)+np.min(aFine)),fontsize=14)
-plt.legend(frameon=False,fontsize=18)
-plt.title('Multiscale coefficient $A_{\epsilon}(x)$', fontsize=20)
-plt.grid(True,which="both",ls="--")
+plt.legend(frameon=False,fontsize=22)
+plt.title(r'Multiscale coefficient $A_{\epsilon}(x)$', fontsize=24)
+plt.grid(True,which="both")
+plt.show()
+
+# plot B(x)
+plt.figure('Coefficient')
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+plt.subplots_adjust(left=0.09, bottom=0.08, right=0.99, top=0.91, wspace=0.1, hspace=0.2)
+plt.tick_params(labelsize=16)
+plt.plot(xt,bFine, linewidth=2, label=r'$B_{\epsilon}(x)$')
+plt.yticks((0,np.max(bFine)+np.min(bFine)),fontsize=14)
+plt.legend(frameon=False,fontsize=22)
+plt.title(r'Multiscale coefficient $B_{\epsilon}(x)$', fontsize=24)
+plt.grid(True,which="both")
 plt.show()
 
 # mesh and localization parameters
@@ -192,5 +207,5 @@ for i in range(numTimeSteps):
     # append solution
     UFine.append(UFineFull)
 
-print min(UFine[-1] - VFine[-1] - WFine[-1])
+# print L2-error
 print np.sqrt(np.dot((UFine[-1] - VFine[-1] - WFine[-1]), (UFine[-1] - VFine[-1] - WFine[-1])))

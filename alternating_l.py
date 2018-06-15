@@ -1,9 +1,9 @@
 import numpy as np
 import scipy.sparse as sparse
 import matplotlib.pyplot as plt
-from gridlod import util, fem, coef, interp, linalg
+from gridlod import util, fem, coef, interp, linalg, pg
 from gridlod.world import World
-import lodWave
+import lod_wave
 
 '''
 Settings
@@ -23,11 +23,11 @@ xp = util.pCoordinates(NFine).flatten()
 
 # time step parameters
 tau = 0.01
-numTimeSteps = 50
+numTimeSteps = 1000
 
 # ms coefficients
-epsA = 2 ** (-5)
-epsB = 2 ** (-5)
+epsA = 2 ** (-4)
+epsB = 2 ** (-6)
 aFine = (2 - np.sin(2 * np.pi * xt / epsA)) ** (-1)
 bFine = (2 - np.cos(2 * np.pi * xt / epsB)) ** (-1)
 
@@ -36,10 +36,14 @@ k_0 = np.inf
 NList = [2, 4, 8, 16, 32, 64]
 
 error = []
-errorFEM = []
-
+C = 5 * 10 ** (-4)
+x = []
+y = []
 
 for N in NList:
+
+    H = 1./N
+    TOL = C * H
 
     # coarse mesh parameters
     NWorldCoarse = np.array([N])
@@ -61,7 +65,7 @@ for N in NList:
     a_coef = coef.coefficientFine(NWorldCoarse, NCoarseElement, aFine / tau)
 
     # compute basis correctors
-    lod = lodWave.LodWave(b_coef, world, k_0, IPatchGenerator, a_coef)
+    lod = lod_wave.LodWave(b_coef, world, k_0, IPatchGenerator, a_coef)
     lod.compute_basis_correctors()
 
     # compute ms basis
@@ -77,17 +81,22 @@ for N in NList:
 
     prev_fs_sol = ms_basis
     fs_solutions = []
-    for i in xrange(numTimeSteps):
-        if i % 10 == 0:
-            print 'Calculating correction at N = %d, i = %d' % (N, i)
+    normvalue = np.inf
+    l = 0
+    while normvalue > TOL and l < numTimeSteps:
 
         # solve non-localized system
-        lod = lodWave.LodWave(b_coef, world, np.inf, IPatchGenerator, a_coef, prev_fs_sol, ms_basis)
+        lod = lod_wave.LodWave(b_coef, world, np.inf, IPatchGenerator, a_coef, prev_fs_sol, ms_basis)
         lod.solve_fs_system()
 
         # store sparse solution
         prev_fs_sol = sparse.csc_matrix(np.array(np.column_stack(lod.fs_list)))
         fs_solutions.append(prev_fs_sol)
+
+        normvalue = np.sqrt(np.dot(np.gradient(prev_fs_sol.toarray()[:,N/2]), np.gradient(prev_fs_sol.toarray()[:,N/2])))
+
+        l += 1
+        print 'N = %d, l = %d' %(N, l)
 
     '''
     Compute v^n and w^n
@@ -103,12 +112,6 @@ for N in NList:
     # fine v^(-1) and v^0
     VFine = [ms_basis * Uo]
     VFine.append(ms_basis * Uo)
-
-    # initial values for standard FEM
-    UFEM = [Uo]
-    UFEM.append(Uo)
-    UFEMFine = [ms_basis * Uo]
-    UFEMFine.append(ms_basis * Uo)
 
     # reference solution
     UFine = [ms_basis * Uo]
@@ -145,25 +148,27 @@ for N in NList:
 
     RmsFreeList = []
     for i in xrange(numTimeSteps):
-        if i % 10 == 0:
-            print 'LOD at N = %d, i = %d' % (N, i)
 
         n = i + 1
 
         # linear system
         A = (1. / (tau ** 2)) * MmsFree + (1. / tau) * SmsFree + KmsFree
         b = LmsFree + (1. / tau) * SmsFree * V[n][free] + (2. / (tau ** 2)) * MmsFree * V[n][free] - (1. / (
-        tau ** 2)) * MmsFree * V[n - 1][free]
+            tau ** 2)) * MmsFree * V[n - 1][free]
 
-        # store ms matrix R^{ms',h}_{H,i,k}
-        RmsFull = ms_basis.T * S * fs_solutions[i]
-        RmsFree = RmsFull[free][:, free]
-        RmsFreeList.append(RmsFree)
+        if i < l:
+            # store ms matrix R^{ms',h}_{H,i,k}
+            RmsFull = ms_basis.T * S * fs_solutions[i]
+            RmsFree = RmsFull[free][:, free]
+            RmsFreeList.append(RmsFree)
 
-        # add sum to linear system
         if i is not 0:
-            for j in range(i):
-                b += (1. / tau) * RmsFreeList[j] * V[n - 1 - j][free]
+            if i < l:
+                for j in range(i):
+                    b += (1. / tau) * RmsFreeList[j] * V[n - 1 - j][free]
+            else:
+                for j in range(l):
+                    b += (1. / tau) * RmsFreeList[j] * V[n - 1 - j][free]
 
         # solve system
         VFree = linalg.linSolve(A, b)
@@ -177,46 +182,13 @@ for N in NList:
         # evaluate w^n
         w = 0
         if i is not 0:
-            for j in range(0, i + 1):
-                w += fs_solutions[j] * V[n - j]
+            if i < l:
+                for j in range(0, i + 1):
+                    w += fs_solutions[j] * V[n - j]
+            else:
+                for j in range(0, l):
+                    w += fs_solutions[j] * V[n - j]
         WFine.append(w)
-
-    '''
-    Compute standard FEM solution
-    '''
-
-    # standard FEM matrices
-    SFull = basis.T * S * basis
-    KFull = basis.T * K * basis
-    MFull = basis.T * M * basis
-
-    SFree = SFull[free][:, free]
-    KFree = KFull[free][:, free]
-    MFree = MFull[free][:, free]
-
-    f = np.ones(NpFine)
-    LFull = M * f
-    LFull = basis.T * LFull
-    LFree = LFull[free]
-    for i in xrange(numTimeSteps):
-        if i % 10 == 0:
-            print 'FEM at N = %d, i = %d' % (N, i)
-
-        n = i + 1
-
-        # standard FEM system
-        A = (1. / (tau ** 2)) * MFree + (1. / tau) * SFree + KFree
-        b = LFree + (1. / tau) * SFree * UFEM[n][free] + (2. / (tau ** 2)) * MFree * UFEM[n][free] - (1. / (
-            tau ** 2)) * MFree * UFEM[n - 1][free]
-
-        # solve system
-        UFEMFree = linalg.linSolve(A, b)
-        UFEMFull = np.zeros(NpCoarse)
-        UFEMFull[free] = UFEMFree
-
-        # append solution
-        UFEM.append(UFEMFull)
-        UFEMFine.append(basis * UFEMFull)
 
     '''
     Compute reference solution
@@ -236,8 +208,6 @@ for N in NList:
     LFineFree = LFineFull[freeFine]
 
     for i in range(numTimeSteps):
-        if i % 10 == 0:
-            print 'Fine FEM at N = %d, i = %d' % (N, i)
         n = i + 1
 
         # reference system
@@ -254,18 +224,31 @@ for N in NList:
         UFine.append(UFineFull)
 
     # evaluate L^2-error for time step N
-    error.append(np.sqrt(np.dot((UFine[-1] - VFine[-1] - WFine[-1]), (UFine[-1] - VFine[-1] - WFine[-1]))))
-    errorFEM.append(np.sqrt(np.dot((UFine[-1] - UFEMFine[-1]), (UFine[-1] - UFEMFine[-1]))))
+    error.append(np.sqrt(np.dot(np.gradient(UFine[-1] - VFine[-1] - WFine[-1]), np.gradient(UFine[-1] - VFine[-1] - WFine[-1]))))
+
 
 
 # plot errors
 plt.figure('Error comparison')
-plt.loglog(NList, error, '--s', basex=2, basey=2, label='LOD $k=\Omega')
-plt.loglog(NList, errorFEM, '--s', basex=2, basey=2, label='FEM')
-plt.grid(True, which="both", ls="--")
-plt.ylabel('$L^2$-error', fontsize=14)
-plt.xlabel('$1/H$', fontsize=14)
-plt.title('$L^2$-error at $t=%.2f$' % (numTimeSteps * tau), fontsize=16)
-plt.legend(fontsize=12)
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+plt.tick_params(labelsize=16)
+plt.subplots_adjust(left=0.09, bottom=0.08, right=0.99, top=0.92, wspace=0.1, hspace=0.2)
+plt.loglog(NList, error, '--s', basex=2, basey=2)
+plt.grid(True, which="both")
+plt.title(r'$H^1$-error at $t=%.1f$' % (numTimeSteps * tau), fontsize=24)
+
+plt.show()
+
+# plot errors
+plt.figure('Error comparison', figsize=(12,6))
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+plt.subplots_adjust(left=0.075, bottom=0.06, right=0.99, top=0.92, wspace=0.1, hspace=0.2)
+plt.tick_params(labelsize=18)
+plt.loglog(NList, error, '--s', basex=2, basey=2)
+plt.grid(True, which="both")
+plt.title(r'$H^1$-error at $t=%.1f$' % (numTimeSteps * tau), fontsize=24)
+plt.legend(fontsize=16)
 
 plt.show()

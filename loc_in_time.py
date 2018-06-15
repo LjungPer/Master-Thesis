@@ -23,17 +23,17 @@ xp = util.pCoordinates(NFine).flatten()
 
 # time step parameters
 tau = 0.01
-numTimeSteps = 3000
+numTimeSteps = 100
 
 # ms coefficients
-epsA = 2 ** (-5)
-epsB = 2 ** (-5)
+epsA = 2 ** (-4)
+epsB = 2 ** (-6)
 aFine = (2 - np.sin(2 * np.pi * xt / epsA)) ** (-1)
 bFine = (2 - np.cos(2 * np.pi * xt / epsB)) ** (-1)
 
 # localization and mesh width parameters
 k_0 = np.inf
-lList = [600, 700, 800, 900]
+lList = [10, 20, 30, 40, 50, 60, 70, 80, 90]
 NList = [2, 4, 8, 16, 32, 64]
 
 error = []
@@ -218,18 +218,21 @@ for l in lList:
             UFine.append(UFineFull)
 
         # evaluate L^2-error for time step N
-        errorl.append(np.sqrt(np.dot((UFine[-1] - VFine[-1] - WFine[-1]), (UFine[-1] - VFine[-1] - WFine[-1]))))
+        errorl.append(np.sqrt(np.dot(np.gradient(UFine[-1] - VFine[-1] - WFine[-1]), np.gradient(UFine[-1] - VFine[-1] - WFine[-1]))))
 
     error.append(errorl)
 
 
 # plot errors
 plt.figure('Error comparison')
-plt.subplots_adjust(left=0.065, bottom=0.055, right=0.99, top=0.93, wspace=0.1, hspace=0.2)
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+plt.tick_params(labelsize=18)
+plt.subplots_adjust(left=0.08, bottom=0.08, right=0.99, top=0.92, wspace=0.1, hspace=0.2)
 for i in range(len(lList)):
-    plt.loglog(NList, error[i], '--s', basex=2, basey=2, label='l = %d' %lList[i])
-plt.grid(True, which="both", ls="--")
-plt.title('$L^2$-error at $t=%.2f$' % (numTimeSteps * tau), fontsize=16)
-plt.legend(fontsize=12)
+    plt.loglog(NList, error[i], '--s', basex=2, basey=2, label=r'l = %d' %lList[i])
+plt.grid(True, which="both")
+plt.title(r'$H^1$-error at $t=%.1f$ for different $l$' % (numTimeSteps * tau), fontsize=24)
+plt.legend(fontsize=16)
 
 plt.show()

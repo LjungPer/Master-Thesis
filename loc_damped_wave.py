@@ -32,7 +32,7 @@ aFine = (2 - np.sin(2 * np.pi * xt / epsA)) ** (-1)
 bFine = (2 - np.cos(2 * np.pi * xt / epsB)) ** (-1)
 
 # localization and mesh width parameters
-kList = [4, 5, 6]
+kList = [4,5,6]
 NList = [2, 4, 8, 16, 32, 64]
 
 error = []
@@ -62,7 +62,7 @@ for k in kList:
         a_coef = coef.coefficientFine(NWorldCoarse, NCoarseElement, aFine / tau)
 
         # compute basis correctors
-        lod = lod_wave.LodWave(b_coef, world, k, IPatchGenerator, a_coef)
+        lod = lod_wave.LodWave(b_coef, world, k-1, IPatchGenerator, a_coef)
         lod.compute_basis_correctors()
 
         # compute ms basis
@@ -84,7 +84,7 @@ for k in kList:
                                                                                        i, numTimeSteps)
 
             # solve system
-            lod = lod_wave.LodWave(b_coef, world, k-1, IPatchGenerator, a_coef, prev_fs_sol, ms_basis)
+            lod = lod_wave.LodWave(b_coef, world, k, IPatchGenerator, a_coef, prev_fs_sol, ms_basis)
             lod.solve_fs_system(localized=True)
 
             # store sparse solution
@@ -209,18 +209,24 @@ for k in kList:
             UFine.append(UFineFull)
 
         # evaluate L^2-error for time step N
-        errork.append(np.sqrt(np.dot((UFine[-1] - VFine[-1] - WFine[-1]), (UFine[-1] - VFine[-1] - WFine[-1]))))
+        errork.append(np.sqrt(np.dot(np.gradient(UFine[-1] - VFine[-1] - WFine[-1]), np.gradient(UFine[-1] - VFine[-1] - WFine[-1]))))
 
     error.append(errork)
 
 # plot errors
 plt.figure('Error comparison')
 plt.subplots_adjust(left=0.09, bottom=0.07, right=0.99, top=0.92, wspace=0.1, hspace=0.2)
-plt.tick_params(labelsize=14)
-for i in range(len(kList)):
-    plt.loglog(NList, error[i], '--s', basex=2, basey=2, label='$k_1=%d$' %kList[i])
-plt.grid(True, which="both", ls="--")
-plt.title('$L^2$-error at $t=%.1f$, fixed $k_0$' % (numTimeSteps * tau), fontsize=20)
-plt.legend(fontsize=12)
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+plt.tick_params(labelsize=16)
+plt.loglog(NList, error[0], '--s', basex=2, basey=2, label=r'$k_0=1')
+plt.loglog(NList, error[1], '--x', basex=2, basey=2, label=r'$k_0=2')
+plt.loglog(NList, error[2], '-->', basex=2, basey=2, label=r'$k_0=3')
+plt.loglog(NList, error[3], '--^', basex=2, basey=2, label=r'$k_0=4')
+plt.loglog(NList, error[4], '--*', basex=2, basey=2, label=r'$k_0=5')
+plt.loglog(NList, error[5], '--D', basex=2, basey=2, label=r'$k_0=6')
+plt.grid(True, which="both")
+plt.title(r'$H^1$-error at $t=%.1f$ with fixed $k_1$' % (numTimeSteps * tau), fontsize=20)
+plt.legend(fontsize=16)
 
 plt.show()
