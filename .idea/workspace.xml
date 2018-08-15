@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5e87f6a8-5593-442b-aaaf-01cce8e9c67e" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Notebooks/Non_Homogeneous_Figures_6.2-6.3.ipynb" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Notebooks/.ipynb_checkpoints/Localized_Damped_Wave_Figure_6.9-checkpoint.ipynb" afterPath="$PROJECT_DIR$/Notebooks/.ipynb_checkpoints/Localized_Damped_Wave_Figure_6.9-checkpoint.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Notebooks/FEM_2D_MS_Figures_2.6-2.8.ipynb" afterPath="$PROJECT_DIR$/Notebooks/FEM_2D_MS_Figures_2.6-2.8.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Notebooks/Localized_Damped_Wave_Figure_6.9.ipynb" afterPath="$PROJECT_DIR$/Notebooks/Localized_Damped_Wave_Figure_6.9.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Notebooks/MS_Basis_FIgure_3.2.ipynb" afterPath="$PROJECT_DIR$/Notebooks/MS_Basis_FIgure_3.2.ipynb" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Notebooks/Time_Localization.ipynb" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Notebooks/tau_analysis.ipynb" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.ipynb_checkpoints/loc_in_time-checkpoint.ipynb" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/loc_in_time-checkpoint.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Notebooks/Solution_Corrections.ipynb" afterPath="$PROJECT_DIR$/Notebooks/Solution_Corrections.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Notebooks/Solution_decomposition_Figure_6.1.ipynb" afterPath="$PROJECT_DIR$/Notebooks/Solution_decomposition_Figure_6.1.ipynb" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -31,7 +31,7 @@
         <entry file="file://$PROJECT_DIR$/damped_wave.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-8294">
-              <caret line="25" column="17" lean-forward="true" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
+              <caret line="25" column="17" lean-forward="false" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -43,7 +43,7 @@
         <entry file="file://$PROJECT_DIR$/different_taus_source.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-5382">
-              <caret line="28" column="0" lean-forward="true" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+              <caret line="28" column="0" lean-forward="false" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -52,18 +52,40 @@
       <file leaf-file-name="plot_corrections.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/plot_corrections.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="91" column="48" lean-forward="false" selection-start-line="91" selection-start-column="48" selection-end-line="91" selection-end-column="48" />
+            <state relative-caret-position="474">
+              <caret line="89" column="37" lean-forward="true" selection-start-line="89" selection-start-column="37" selection-end-line="89" selection-end-column="37" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="with_source_term.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="loc_in_time.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/loc_in_time.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="634">
+              <caret line="234" column="91" lean-forward="true" selection-start-line="234" selection-start-column="91" selection-end-line="234" selection-end-column="91" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="alternate_tau.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/alternate_tau.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="378">
+              <caret line="205" column="0" lean-forward="false" selection-start-line="205" selection-start-column="0" selection-end-line="216" selection-end-column="10" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="with_source_term.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/with_source_term.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="308" column="0" lean-forward="false" selection-start-line="308" selection-start-column="0" selection-end-line="322" selection-end-column="0" />
+            <state relative-caret-position="666">
+              <caret line="311" column="0" lean-forward="false" selection-start-line="311" selection-start-column="0" selection-end-line="312" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -541,27 +563,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loc_in_time.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="736">
-          <caret line="28" column="16" lean-forward="false" selection-start-line="28" selection-start-column="16" selection-end-line="28" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alternating_l.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="832">
-          <caret line="31" column="51" lean-forward="false" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alternate_tau.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1486">
-          <caret line="216" column="10" lean-forward="false" selection-start-line="216" selection-start-column="10" selection-end-line="216" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lod_element.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1486">
@@ -591,7 +592,7 @@
     <entry file="file://$PROJECT_DIR$/damped_wave.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-8294">
-          <caret line="25" column="17" lean-forward="true" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
+          <caret line="25" column="17" lean-forward="false" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -601,24 +602,50 @@
     <entry file="file://$PROJECT_DIR$/different_taus_source.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-5382">
-          <caret line="28" column="0" lean-forward="true" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/plot_corrections.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="91" column="48" lean-forward="false" selection-start-line="91" selection-start-column="48" selection-end-line="91" selection-end-column="48" />
+          <caret line="28" column="0" lean-forward="false" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/with_source_term.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="308" column="0" lean-forward="false" selection-start-line="308" selection-start-column="0" selection-end-line="322" selection-end-column="0" />
+        <state relative-caret-position="666">
+          <caret line="311" column="0" lean-forward="false" selection-start-line="311" selection-start-column="0" selection-end-line="312" selection-end-column="30" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alternating_l.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1568">
+          <caret line="31" column="51" lean-forward="false" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plot_corrections.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="474">
+          <caret line="89" column="37" lean-forward="true" selection-start-line="89" selection-start-column="37" selection-end-line="89" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loc_in_time.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="634">
+          <caret line="234" column="91" lean-forward="true" selection-start-line="234" selection-start-column="91" selection-end-line="234" selection-end-column="91" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alternate_tau.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="205" column="0" lean-forward="false" selection-start-line="205" selection-start-column="0" selection-end-line="216" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
